@@ -7,6 +7,7 @@ import cascading.operation.expression.ExpressionFilter;
 import cascading.operation.expression.ExpressionFunction;
 import cascading.pipe.Each;
 import cascading.pipe.Pipe;
+import cascading.pipe.assembly.Discard;
 import cascading.tap.Tap;
 import cascading.tuple.Fields;
 
@@ -26,7 +27,17 @@ public class Mapping {
 	 * @see http://docs.cascading.org/cascading/3.0/userguide/ch05-pipe-assemblies.html#each-every
 	 */
 	public static FlowDef filterWithExpression(Tap<?, ?, ?> source, Tap<?, ?, ?> sink) {
-		return null;
+
+		Pipe pipe = new Pipe("filterWithExpression");
+
+		pipe = new Each(pipe,new Fields("line"),new ExpressionFilter("!line.contains(\"Hadoop\")",String.class));
+
+
+		return FlowDef.flowDef()//
+				.addSource(pipe, source) //
+				.addTail(pipe)//
+				.addSink(pipe, sink);
+
 	}
 	
 	/**
@@ -40,7 +51,16 @@ public class Mapping {
 	 * @see http://docs.cascading.org/cascading/3.0/userguide/ch05-pipe-assemblies.html#each-every
 	 */
 	public static FlowDef transformWithExpression(Tap<?, ?, ?> source, Tap<?, ?, ?> sink) {
-		return null;
+
+		Pipe pipe = new Pipe("transformWithExpression");
+
+		pipe = new Each(pipe,new Fields("line"),new ExpressionFunction(new Fields("line"),"line.toLowerCase()",String.class));
+
+
+		return FlowDef.flowDef()//
+				.addSource(pipe, source) //
+				.addTail(pipe)//
+				.addSink(pipe, sink);
 	}
 	
 	/**

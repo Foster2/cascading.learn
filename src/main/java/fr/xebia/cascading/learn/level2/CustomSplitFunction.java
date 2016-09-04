@@ -8,19 +8,23 @@ import cascading.tuple.Fields;
 import cascading.tuple.Tuple;
 
 public class CustomSplitFunction<Context> extends BaseOperation<Context> implements Function<Context> {
-	private static final long serialVersionUID = 1L;
-	
-	public CustomSplitFunction(Fields wordField) {
-		super(1, wordField);
-	}
+    private static final long serialVersionUID = 1L;
 
-	@Override
-	public void operate(@SuppressWarnings("rawtypes") FlowProcess flowProcess,
-			FunctionCall<Context> functionCall) {
-		String line = functionCall.getArguments().getString(0);
-		String word = line; // or not ?
-		functionCall.getOutputCollector().add(new Tuple(word));
-		functionCall.getOutputCollector().add(new Tuple(word));
-	}
-	
+    public CustomSplitFunction(Fields wordField) {
+        super(1, wordField);
+    }
+
+    @Override
+    public void operate(@SuppressWarnings("rawtypes") FlowProcess flowProcess,
+                        FunctionCall<Context> functionCall) {
+        String line = functionCall.getArguments().getString(0);
+        String[] array = line.split(" ");
+        if (array != null && array.length > 0) {
+            for (String word : array) {
+                //String word = line; // or not ?
+                functionCall.getOutputCollector().add(new Tuple(word));
+            }
+        }
+    }
+
 }
